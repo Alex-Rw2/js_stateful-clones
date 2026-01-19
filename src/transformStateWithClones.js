@@ -14,27 +14,30 @@ function transformStateWithClones(state, actions) {
   for (const action of actions) {
     let nextState;
 
-    if (action.type === 'clear') {
-      nextState = {};
-    } else {
-      nextState = { ...currentState };
+    switch (action.type) {
+      case 'clear':
+        nextState = {};
+        break;
+
+      default:
+        nextState = { ...currentState };
+        break;
     }
 
-    if (
-      action.type === 'removeProperties' &&
-      Array.isArray(action.keysToRemove)
-    ) {
-      for (const key of action.keysToRemove) {
-        delete nextState[key];
-      }
-    }
+    switch (action.type) {
+      case 'removeProperties':
+        if (Array.isArray(action.keysToRemove)) {
+          for (const key of action.keysToRemove) {
+            delete nextState[key];
+          }
+        }
+        break;
 
-    if (
-      action.type === 'addProperties' &&
-      typeof action.extraData === 'object' &&
-      action.extraData !== null
-    ) {
-      Object.assign(nextState, action.extraData);
+      case 'addProperties':
+        if (typeof action.extraData === 'object' && action.extraData !== null) {
+          Object.assign(nextState, action.extraData);
+        }
+        break;
     }
 
     history.push(nextState);
@@ -43,5 +46,7 @@ function transformStateWithClones(state, actions) {
 
   return history;
 }
+
+module.exports = transformStateWithClones;
 
 module.exports = transformStateWithClones;
