@@ -1,7 +1,6 @@
 'use strict';
 
 /**
-/**
  * @param {Object} state
  * @param {Object[]} actions
  *
@@ -19,13 +18,16 @@ function transformStateWithClones(state, actions) {
         nextState = {};
         break;
 
-      default:
+      case 'addProperties':
         nextState = { ...currentState };
-        break;
-    }
 
-    switch (action.type) {
+        if (typeof action.extraData === 'object' && action.extraData !== null) {
+          Object.assign(nextState, action.extraData);
+        }
+        break;
       case 'removeProperties':
+        nextState = { ...currentState };
+
         if (Array.isArray(action.keysToRemove)) {
           for (const key of action.keysToRemove) {
             delete nextState[key];
@@ -33,10 +35,9 @@ function transformStateWithClones(state, actions) {
         }
         break;
 
-      case 'addProperties':
-        if (typeof action.extraData === 'object' && action.extraData !== null) {
-          Object.assign(nextState, action.extraData);
-        }
+      default:
+        // ação desconhecida → apenas clona o estado
+        nextState = { ...currentState };
         break;
     }
 
@@ -46,7 +47,4 @@ function transformStateWithClones(state, actions) {
 
   return history;
 }
-
-module.exports = transformStateWithClones;
-
 module.exports = transformStateWithClones;
